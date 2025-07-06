@@ -89,11 +89,19 @@ double result = interpolator.evaluate(0.5);
 ## Compilation
 
 ```bash
+# Compile the program
 g++ -std=c++17 -O3 -Wall -Wextra main.cpp -o main
 ```
-# or
 
 ```bash
+# Run the program
+./main
+```
+
+or
+
+```bash
+# Compile the program
 clang++ -std=c++17 main.cpp -o  main
 ```
 
