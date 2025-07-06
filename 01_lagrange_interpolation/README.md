@@ -102,7 +102,7 @@ or
 
 ```bash
 # Compile the program
-clang++ -std=c++17 main.cpp -o  main
+clang++ -std=c++17 main.cpp -o main
 ```
 
 ```bash
