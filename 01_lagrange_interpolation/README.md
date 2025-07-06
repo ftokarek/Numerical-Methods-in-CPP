@@ -56,7 +56,8 @@ where wᵢ are the barycentric weights computed once during initialization.
 
 ### `numerical_methods::Node`
 ```cpp
-struct Node {
+struct Node 
+{
     double x, y;
     constexpr Node(double x, double y) noexcept;
 };
@@ -64,12 +65,13 @@ struct Node {
 
 ### `numerical_methods::LagrangeInterpolator`
 ```cpp
-class LagrangeInterpolator {
-public:
-    explicit LagrangeInterpolator(std::vector<Node> nodes);
-    [[nodiscard]] double evaluate(double x) const noexcept;
-    [[nodiscard]] const std::vector<Node>& get_nodes() const noexcept;
-    [[nodiscard]] size_t size() const noexcept;
+class LagrangeInterpolator 
+{
+  public:
+      explicit LagrangeInterpolator(std::vector<Node> nodes);
+      [[nodiscard]] double evaluate(double x) const noexcept;
+      [[nodiscard]] const std::vector<Node>& get_nodes() const noexcept;
+      [[nodiscard]] size_t size() const noexcept;
 };
 ```
 

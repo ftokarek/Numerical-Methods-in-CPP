@@ -63,7 +63,6 @@ class NewtonInterpolator
 {
     public:
         explicit NewtonInterpolator(std::vector<Node> nodes);
-        
         [[nodiscard]] double evaluate(double x) const noexcept;
         [[nodiscard]] const std::vector<Node>& get_nodes() const noexcept;
         [[nodiscard]] const std::vector<double>& get_coefficients() const noexcept;
