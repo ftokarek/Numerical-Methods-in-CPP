@@ -14,7 +14,7 @@ struct Node
 };
 
 // Function to compute the Lagrange interpolation polynomial at a given point
-double lagrange(const vector<Node> &nodes, double point) 
+double lagrange(const vector<Node> &nodes, double point)
 {
     if (nodes.empty())
         return 0.0;
@@ -51,4 +51,26 @@ void printResults(const vector<Node> &nodes, double point, double result)
     }
 
     cout << "\nFor point x = " << point << ", interpolated value f(x) = " << result << endl;
+}
+
+int main() 
+{
+    // Task 1: Manual input and interpolation
+    vector<Node> nodes = {{-4, 5}, {-3, 2}, {1, 5}, {2, 2}};
+
+    double point;
+    cout << "Task 1:\n\nEnter the point at which to evaluate the interpolation: ";
+    cin >> point;
+
+    double result = lagrange(nodes, point);
+    printResults(nodes, point, result);
+
+    // Task 2: Predefined square root-like table interpolation
+    vector<Node> nodesSqrt = {{27, 3}, {64, 4}, {125, 5}, {216, 6}};
+    double resultSqrt = lagrange(nodesSqrt, 50);
+
+    cout << "\nTask 2:" << endl;
+    cout << "Interpolated value f(50) = " << resultSqrt << endl << endl;
+
+    return 0;
 }
