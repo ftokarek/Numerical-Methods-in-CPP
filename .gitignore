@@ -29,12 +29,16 @@
 *.app
 # Binary executables without extensions (common on Unix-like systems)
 main
+lagrange
+newton
 a.out
 # General pattern for binaries in project directories
 */main
 */lagrange
+*/newton
 **/main
 **/lagrange
+**/newton
 
 # Debug files
 *.dSYM/
