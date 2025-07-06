@@ -4,8 +4,6 @@
 #include <stdexcept>
 #include <vector>
 
-using namespace std;
-
 // Struct representing a single interpolation node (x, y)
 struct Node 
 {
@@ -14,7 +12,7 @@ struct Node
 };
 
 // Function to compute the Lagrange interpolation polynomial at a given point
-double lagrange(const vector<Node> &nodes, double point)
+double lagrange(const std::vector<Node> &nodes, double point)
 {
     if (nodes.empty())
         return 0.0;
@@ -23,10 +21,10 @@ double lagrange(const vector<Node> &nodes, double point)
 
     double result = 0.0;
 
-    for (size_t i = 0; i < nodes.size(); ++i) 
+    for (std::size_t i = 0; i < nodes.size(); ++i) 
     {
         double li = nodes[i].y;
-        for (size_t j = 0; j < nodes.size(); ++j) 
+        for (std::size_t j = 0; j < nodes.size(); ++j) 
         {
             if (i != j) 
             {
@@ -40,37 +38,37 @@ double lagrange(const vector<Node> &nodes, double point)
 }
 
 // Function to print interpolation data and result
-void printResults(const vector<Node> &nodes, double point, double result) 
+void printResults(const std::vector<Node> &nodes, double point, double result) 
 {
-    cout << "Number of interpolation nodes: " << nodes.size() << endl;
-    cout << "\nInterpolation nodes:" << endl;
+    std::cout << "Number of interpolation nodes: " << nodes.size() << std::endl;
+    std::cout << "\nInterpolation nodes:" << std::endl;
 
     for (const auto &node : nodes) 
     {
-        cout << setw(4) << node.x << " , " << setw(4) << node.y << endl;
+        std::cout << std::setw(4) << node.x << " , " << std::setw(4) << node.y << std::endl;
     }
 
-    cout << "\nFor point x = " << point << ", interpolated value f(x) = " << result << endl;
+    std::cout << "\nFor point x = " << point << ", interpolated value f(x) = " << result << std::endl;
 }
 
 int main() 
 {
     // Task 1: Manual input and interpolation
-    vector<Node> nodes = {{-4, 5}, {-3, 2}, {1, 5}, {2, 2}};
+    std::vector<Node> nodes = {{-4, 5}, {-3, 2}, {1, 5}, {2, 2}};
 
     double point;
-    cout << "Task 1:\n\nEnter the point at which to evaluate the interpolation: ";
-    cin >> point;
+    std::cout << "Task 1:\n\nEnter the point at which to evaluate the interpolation: ";
+    std::cin >> point;
 
     double result = lagrange(nodes, point);
     printResults(nodes, point, result);
 
     // Task 2: Predefined square root-like table interpolation
-    vector<Node> nodesSqrt = {{27, 3}, {64, 4}, {125, 5}, {216, 6}};
+    std::vector<Node> nodesSqrt = {{27, 3}, {64, 4}, {125, 5}, {216, 6}};
     double resultSqrt = lagrange(nodesSqrt, 50);
 
-    cout << "\nTask 2:" << endl;
-    cout << "Interpolated value f(50) = " << resultSqrt << endl << endl;
+    std::cout << "\nTask 2:" << std::endl;
+    std::cout << "Interpolated value f(50) = " << resultSqrt << std::endl << std::endl;
 
     return 0;
 }
