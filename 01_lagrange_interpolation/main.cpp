@@ -12,16 +12,16 @@ void print_results(const LagrangeInterpolator& interpolator, double point, doubl
 
     for (const auto& node : interpolator.get_nodes()) 
     {
-        std::cout << std::setw(8) << std::fixed << std::setprecision(3) 
-                  << node.x << " , " << std::setw(8) << node.y << std::endl;
+        std::cout << std::setw(8) << std::fixed << std::setprecision(3) << node.x << " , " << std::setw(8) << node.y << std::endl;
     }
 
-    std::cout << "\nFor point x = " << std::fixed << std::setprecision(6) << point 
-              << ", interpolated value f(x) = " << result << std::endl;
+    std::cout << "\nFor point x = " << std::fixed << std::setprecision(6) << point << ", interpolated value f(x) = " << result << std::endl;
 }
 
-int main() {
-    try {
+int main() 
+{
+    try 
+    {
         // Task 1: Manual input and interpolation
         LagrangeInterpolator interpolator1({{-4, 5}, {-3, 2}, {1, 5}, {2, 2}});
 
@@ -37,12 +37,12 @@ int main() {
         double result_sqrt = interpolator2.evaluate(50);
 
         std::cout << "\nTask 2:" << std::endl;
-        std::cout << "Interpolated value f(50) = " << std::fixed << std::setprecision(6) 
-                  << result_sqrt << std::endl;
+        std::cout << "Interpolated value f(50) = " << std::fixed << std::setprecision(6) << result_sqrt << std::endl;
 
         return 0;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e) 
+    {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
