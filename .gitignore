@@ -34,6 +34,7 @@ newton
 gaussian
 gauss
 cholesky
+jacobi
 a.out
 # General pattern for binaries in project directories
 */main
@@ -42,12 +43,14 @@ a.out
 */gaussian
 */gauss
 */cholesky
+*/jacobi
 **/main
 **/lagrange
 **/newton
 **/gaussian
 **/gauss
 **/cholesky
+**/jacobi
 
 # Debug files
 *.dSYM/
