@@ -33,6 +33,7 @@ lagrange
 newton
 gaussian
 gauss
+cholesky
 a.out
 # General pattern for binaries in project directories
 */main
@@ -40,11 +41,13 @@ a.out
 */newton
 */gaussian
 */gauss
+*/cholesky
 **/main
 **/lagrange
 **/newton
 **/gaussian
 **/gauss
+**/cholesky
 
 # Debug files
 *.dSYM/
