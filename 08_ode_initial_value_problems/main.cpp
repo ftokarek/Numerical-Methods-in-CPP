@@ -11,7 +11,9 @@ using namespace numerical_methods;
 /**
  * @brief Test ODE problems with analytical solutions
  */
-struct ODEProblem {
+
+struct ODEProblem 
+{
     std::function<double(double, double)> f;
     std::function<double(double)> analytical;
     std::string description;
@@ -22,8 +24,11 @@ struct ODEProblem {
 /**
  * @brief Collection of test ODE problems
  */
-std::vector<ODEProblem> get_test_problems() {
-    return {
+
+std::vector<ODEProblem> get_test_problems() 
+{
+    return 
+    {
         {
             // Problem 1: y' = 2y(x+1), y(0) = 1
             [](double x, double y) { return 2.0 * y * (x + 1.0); },
@@ -54,7 +59,9 @@ std::vector<ODEProblem> get_test_problems() {
 /**
  * @brief Displays comprehensive solution comparison
  */
-void display_solution_comparison(const ODEProblem& problem, double h) {
+
+void display_solution_comparison(const ODEProblem& problem, double h) 
+{
     const int width = 20;
     const int precision = 10;
     
@@ -88,8 +95,10 @@ void display_solution_comparison(const ODEProblem& problem, double h) {
         ODESolver::Method::RUNGE_KUTTA_4
     };
     
-    for (auto method : methods) {
-        try {
+    for (auto method : methods) 
+    {
+        try 
+        {
             auto result = ODESolver::solve_complete(method, problem.f, 
                                                    problem.x0, problem.y0, problem.x_end, h);
             
@@ -103,7 +112,8 @@ void display_solution_comparison(const ODEProblem& problem, double h) {
                       << std::setw(15) << std::fixed << relative_error
                       << std::setw(10) << result.steps_taken << "\n";
         }
-        catch (const std::exception& e) {
+        catch (const std::exception& e) 
+        {
             std::cout << std::setw(25) << ODESolver::get_method_name(method)
                       << std::setw(width) << "Error: " << e.what() << "\n";
         }
@@ -115,7 +125,9 @@ void display_solution_comparison(const ODEProblem& problem, double h) {
 /**
  * @brief Demonstrates convergence analysis
  */
-void demonstrate_convergence_analysis(const ODEProblem& problem) {
+
+void demonstrate_convergence_analysis(const ODEProblem& problem) 
+{
     std::cout << "\n" << std::string(80, '=') << "\n";
     std::cout << "CONVERGENCE ANALYSIS: " << problem.description << "\n";
     std::cout << std::string(80, '=') << "\n";
@@ -129,19 +141,23 @@ void demonstrate_convergence_analysis(const ODEProblem& problem) {
               << std::setw(20) << "RK4 Error" << "\n";
     std::cout << std::string(80, '-') << "\n";
     
-    for (double h : {0.1, 0.05, 0.025, 0.0125, 0.00625}) {
+    for (double h : {0.1, 0.05, 0.025, 0.0125, 0.00625}) 
+    {
         std::cout << std::setw(10) << h;
         
         for (auto method : {ODESolver::Method::EULER,
                            ODESolver::Method::RUNGE_KUTTA_2,
-                           ODESolver::Method::RUNGE_KUTTA_4}) {
-            try {
+                           ODESolver::Method::RUNGE_KUTTA_4}) 
+        {
+            try 
+            {
                 const double result = ODESolver::solve(method, problem.f, 
                                                      problem.x0, problem.y0, problem.x_end, h);
                 const double error = std::abs(result - analytical);
                 std::cout << std::setw(20) << std::scientific << error;
             }
-            catch (const std::exception&) {
+            catch (const std::exception&) 
+            {
                 std::cout << std::setw(20) << "Error";
             }
         }
@@ -154,7 +170,9 @@ void demonstrate_convergence_analysis(const ODEProblem& problem) {
 /**
  * @brief Interactive mode for custom problems
  */
-void interactive_mode() {
+
+void interactive_mode() 
+{
     std::cout << "\n" << std::string(60, '=') << "\n";
     std::cout << "INTERACTIVE MODE\n";
     std::cout << std::string(60, '=') << "\n";
@@ -172,17 +190,20 @@ void interactive_mode() {
     std::cin >> h;
     
     // Validate parameters
-    if (std::abs(x_end - x0) < 1e-10) {
+    if (std::abs(x_end - x0) < 1e-10) 
+    {
         std::cout << "Warning: x_end is too close to x0. Using default values.\n";
         x0 = 0.0; y0 = 1.0; x_end = 1.0; h = 0.1;
     }
     
-    if (h > std::abs(x_end - x0)) {
+    if (h > std::abs(x_end - x0)) 
+    {
         std::cout << "Warning: Step size too large. Adjusting to reasonable value.\n";
         h = std::abs(x_end - x0) / 10.0;
     }
     
-    if (h <= 0) {
+    if (h <= 0) 
+    {
         std::cout << "Warning: Invalid step size. Using h = 0.1.\n";
         h = 0.1;
     }
@@ -195,11 +216,13 @@ void interactive_mode() {
               << ", x_end=" << x_end << ", h=" << h << "\n";
     
     // Warning for potentially large results
-    if (std::abs(x_end - x0) > 2.0 || std::abs(y0) > 10.0) {
+    if (std::abs(x_end - x0) > 2.0 || std::abs(y0) > 10.0) 
+    {
         std::cout << "\nWarning: Large interval or initial value may lead to extreme results.\n";
     }
     
-    try {
+    try 
+    {
         auto result = ODESolver::solve_complete(ODESolver::Method::RUNGE_KUTTA_4, 
                                                test_problem.f, x0, y0, x_end, h);
         
@@ -208,18 +231,22 @@ void interactive_mode() {
         std::cout << "Steps taken: " << result.steps_taken << "\n";
         
         // Check for extreme values
-        if (std::abs(result.final_value) > 1e10) {
+        if (std::abs(result.final_value) > 1e10) 
+        {
             std::cout << "\nNote: Result is very large due to exponential growth in the ODE.\n";
             std::cout << "This is mathematically correct but may indicate numerical challenges.\n";
         }
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e) 
+    {
         std::cout << "Error: " << e.what() << "\n";
     }
 }
 
-int main() {
-    try {
+int main() 
+{
+    try 
+    {
         std::cout << "Professional ODE Solver Suite for Initial Value Problems\n";
         std::cout << std::string(80, '=') << "\n";
         
@@ -227,12 +254,14 @@ int main() {
         const double h = 0.1;
         
         // Display solutions for each test problem
-        for (const auto& problem : test_problems) {
+        for (const auto& problem : test_problems) 
+        {
             display_solution_comparison(problem, h);
         }
         
         // Demonstrate convergence for the first problem
-        if (!test_problems.empty()) {
+        if (!test_problems.empty()) 
+        {
             demonstrate_convergence_analysis(test_problems[0]);
         }
         
@@ -241,13 +270,15 @@ int main() {
         std::cout << "\nWould you like to test custom parameters? (y/n): ";
         std::cin >> interactive;
         
-        if (interactive == 'y' || interactive == 'Y') {
+        if (interactive == 'y' || interactive == 'Y') 
+        {
             interactive_mode();
         }
         
         return 0;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e) 
+    {
         std::cerr << "\nError: " << e.what() << std::endl;
         std::cerr << "Program terminated.\n";
         return 1;
