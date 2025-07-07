@@ -49,7 +49,7 @@ To improve numerical stability, the algorithm uses **partial pivoting**:
 ├── main.cpp                     # Main program with file input
 ├── gaussian_solver.hpp          # Header with GaussianSolver class
 ├── data.txt                     # Sample input data file
-└── gaussian                     # Compiled binary (ignored by git)
+└── main                         # Compiled binary (ignored by git)
 ```
 
 ## Class Interface
