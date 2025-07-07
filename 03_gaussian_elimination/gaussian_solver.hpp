@@ -6,6 +6,7 @@
 #include <cmath>
 #include <algorithm>
 #include <string>
+#include <numeric>
 
 namespace numerical_methods {
 
@@ -21,6 +22,7 @@ private:
     std::vector<std::vector<double>> matrix_;
     std::vector<double> solution_;
     std::size_t n_;
+    mutable double condition_number_ = -1.0;
     static constexpr double EPSILON = std::numeric_limits<double>::epsilon() * 1e6;
 
     /**
@@ -52,12 +54,12 @@ private:
      * @param start_row Starting row index
      * @return Index of row with maximum absolute value
      */
-    [[nodiscard]] std::size_t find_pivot_row(std::size_t col, std::size_t start_row) const {
+    [[nodiscard]] std::size_t find_pivot_row(std::size_t col, std::size_t start_row) const noexcept {
         std::size_t max_row = start_row;
         double max_val = std::abs(matrix_[start_row][col]);
         
         for (std::size_t i = start_row + 1; i < n_; ++i) {
-            double current_val = std::abs(matrix_[i][col]);
+            const double current_val = std::abs(matrix_[i][col]);
             if (current_val > max_val) {
                 max_val = current_val;
                 max_row = i;
@@ -72,7 +74,7 @@ private:
      * @param row1 First row index
      * @param row2 Second row index
      */
-    void swap_rows(std::size_t row1, std::size_t row2) {
+    void swap_rows(std::size_t row1, std::size_t row2) noexcept {
         if (row1 != row2) {
             std::swap(matrix_[row1], matrix_[row2]);
         }
@@ -85,7 +87,7 @@ private:
     void forward_elimination() {
         for (std::size_t i = 0; i < n_; ++i) {
             // Find pivot row
-            std::size_t pivot_row = find_pivot_row(i, i);
+            const std::size_t pivot_row = find_pivot_row(i, i);
             
             // Check for singular matrix
             if (std::abs(matrix_[pivot_row][i]) < EPSILON) {
@@ -97,11 +99,17 @@ private:
             // Swap rows if necessary
             swap_rows(i, pivot_row);
             
+            // Cache pivot value
+            const double pivot = matrix_[i][i];
+            
             // Eliminate column entries below pivot
             for (std::size_t k = i + 1; k < n_; ++k) {
-                double factor = matrix_[k][i] / matrix_[i][i];
+                const double factor = matrix_[k][i] / pivot;
                 
-                // Eliminate entire row
+                // Skip if factor is effectively zero
+                if (std::abs(factor) < EPSILON) continue;
+                
+                // Eliminate entire row (vectorized operation)
                 for (std::size_t j = i; j <= n_; ++j) {
                     matrix_[k][j] -= factor * matrix_[i][j];
                 }
@@ -120,13 +128,33 @@ private:
             solution_[i] = matrix_[i][n_]; // Start with RHS
             
             // Subtract known values
-            for (std::size_t j = i + 1; j < n_; ++j) {
+            for (std::size_t j = static_cast<std::size_t>(i) + 1; j < n_; ++j) {
                 solution_[i] -= matrix_[i][j] * solution_[j];
             }
             
             // Divide by diagonal element
             solution_[i] /= matrix_[i][i];
         }
+    }
+
+    /**
+     * @brief Computes an estimate of the condition number
+     */
+    void compute_condition_number() const {
+        if (condition_number_ >= 0.0) return; // Already computed
+        
+        // Simple estimate using diagonal elements after elimination
+        double max_diag = 0.0;
+        double min_diag = std::numeric_limits<double>::max();
+        
+        for (std::size_t i = 0; i < n_; ++i) {
+            const double diag = std::abs(matrix_[i][i]);
+            max_diag = std::max(max_diag, diag);
+            min_diag = std::min(min_diag, diag);
+        }
+        
+        condition_number_ = (min_diag > EPSILON) ? max_diag / min_diag : 
+                           std::numeric_limits<double>::infinity();
     }
 
 public:
@@ -137,6 +165,7 @@ public:
      */
     explicit GaussianSolver(std::vector<std::vector<double>> augmented_matrix) 
         : matrix_(std::move(augmented_matrix)), n_(matrix_.size()) {
+        solution_.reserve(n_); // Pre-allocate solution vector
         validate_matrix();
     }
 
@@ -147,6 +176,7 @@ public:
      */
     [[nodiscard]] std::vector<double> solve() {
         forward_elimination();
+        compute_condition_number();
         back_substitution();
         return solution_;
     }
@@ -176,6 +206,17 @@ public:
     }
 
     /**
+     * @brief Returns the condition number estimate
+     * @return Condition number (computed during solve())
+     */
+    [[nodiscard]] double get_condition_number() const {
+        if (condition_number_ < 0.0) {
+            throw std::runtime_error("Condition number not available - call solve() first");
+        }
+        return condition_number_;
+    }
+
+    /**
      * @brief Verifies the solution by computing residual
      * @param original_matrix Original coefficient matrix A
      * @param rhs Right-hand side vector b
@@ -191,15 +232,39 @@ public:
         
         double max_residual = 0.0;
         for (std::size_t i = 0; i < n_; ++i) {
-            double sum = 0.0;
-            for (std::size_t j = 0; j < n_; ++j) {
-                sum += original_matrix[i][j] * solution_[j];
-            }
-            double residual = std::abs(sum - rhs[i]);
+            const double sum = std::inner_product(
+                original_matrix[i].begin(), original_matrix[i].end(),
+                solution_.begin(), 0.0
+            );
+            const double residual = std::abs(sum - rhs[i]);
             max_residual = std::max(max_residual, residual);
         }
         
         return max_residual;
+    }
+
+    /**
+     * @brief Returns the determinant of the original matrix
+     * @return Determinant value
+     */
+    [[nodiscard]] double get_determinant() const {
+        if (solution_.empty()) {
+            throw std::runtime_error("Determinant not available - call solve() first");
+        }
+        
+        double det = 1.0;
+        for (std::size_t i = 0; i < n_; ++i) {
+            det *= matrix_[i][i];
+        }
+        return det;
+    }
+
+    /**
+     * @brief Checks if the system is well-conditioned
+     * @return True if condition number is acceptable
+     */
+    [[nodiscard]] bool is_well_conditioned() const {
+        return get_condition_number() < 1e12;
     }
 };
 
