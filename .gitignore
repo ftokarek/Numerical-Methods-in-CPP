@@ -37,6 +37,8 @@ cholesky
 jacobi
 integration
 integrate
+gauss_legendre
+quadrature
 a.out
 # General pattern for binaries in project directories
 */main
@@ -48,6 +50,8 @@ a.out
 */jacobi
 */integration
 */integrate
+*/gauss_legendre
+*/quadrature
 **/main
 **/lagrange
 **/newton
@@ -57,6 +61,8 @@ a.out
 **/jacobi
 **/integration
 **/integrate
+**/gauss_legendre
+**/quadrature
 
 # Debug files
 *.dSYM/
