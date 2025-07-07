@@ -35,6 +35,8 @@ gaussian
 gauss
 cholesky
 jacobi
+integration
+integrate
 a.out
 # General pattern for binaries in project directories
 */main
@@ -44,6 +46,8 @@ a.out
 */gauss
 */cholesky
 */jacobi
+*/integration
+*/integrate
 **/main
 **/lagrange
 **/newton
@@ -51,6 +55,8 @@ a.out
 **/gauss
 **/cholesky
 **/jacobi
+**/integration
+**/integrate
 
 # Debug files
 *.dSYM/
