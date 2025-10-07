@@ -7,13 +7,6 @@
 
 using namespace numerical_methods;
 
-/**
- * @brief Reads symmetric positive definite system from file
- * @param filename Path to the data file
- * @return Pair of coefficient matrix and RHS vector
- * @throws std::runtime_error for file or format errors
- */
-
 std::pair<std::vector<std::vector<double>>, std::vector<double>> 
 
 read_system_from_file(const std::string& filename) 
@@ -38,7 +31,6 @@ read_system_from_file(const std::string& filename)
     std::vector<std::vector<double>> matrix(n, std::vector<double>(n));
     std::vector<double> rhs(n);
 
-    // Read coefficient matrix
     for (int i = 0; i < n; ++i) 
     {
         for (int j = 0; j < n; ++j) 
@@ -56,7 +48,6 @@ read_system_from_file(const std::string& filename)
         }
     }
 
-    // Read RHS vector
     for (int i = 0; i < n; ++i) 
     {
         if (!(file >> rhs[i])) 
@@ -71,11 +62,6 @@ read_system_from_file(const std::string& filename)
 
     return {matrix, rhs};
 }
-
-/**
- * @brief Displays the coefficient matrix
- * @param matrix Coefficient matrix
- */
 
 void display_matrix(const std::vector<std::vector<double>>& matrix) 
 {
@@ -98,12 +84,6 @@ void display_matrix(const std::vector<std::vector<double>>& matrix)
     std::cout << std::string(50, '-') << "\n";
 }
 
-/**
- * @brief Displays the Cholesky decomposition results
- * @param solver The Cholesky solver instance
- * @param rhs Right-hand side vector
- */
-
 void display_results(const CholeskySolver& solver, const std::vector<double>& rhs) 
 {
     const int width = 15;
@@ -116,7 +96,6 @@ void display_results(const CholeskySolver& solver, const std::vector<double>& rh
     
     std::cout << "\nSystem size: " << solver.size() << "x" << solver.size() << "\n";
     
-    // Display L matrix
     std::cout << "\nLower triangular matrix L:\n";
     std::cout << std::string(40, '-') << "\n";
     const auto& L = solver.get_L_matrix();
@@ -137,7 +116,6 @@ void display_results(const CholeskySolver& solver, const std::vector<double>& rh
         std::cout << "]\n";
     }
     
-    // Display solution
     std::cout << "\nSolution:\n";
     std::cout << std::string(30, '-') << "\n";
     const auto& solution = solver.get_solution();
@@ -146,7 +124,6 @@ void display_results(const CholeskySolver& solver, const std::vector<double>& rh
         std::cout << "x" << std::setw(2) << i + 1 << " = " << std::setw(width) << std::setprecision(precision) << solution[i] << "\n";
     }
     
-    // Verify solution
     double max_residual = solver.verify_solution(rhs);
     std::cout << "\nSolution Verification:\n";
     std::cout << std::string(30, '-') << "\n";
@@ -165,7 +142,6 @@ void display_results(const CholeskySolver& solver, const std::vector<double>& rh
         std::cout << "✗ Solution may be inaccurate\n";
     }
     
-    // Display determinant
     std::cout << "\nMatrix Properties:\n";
     std::cout << std::string(30, '-') << "\n";
     std::cout << "Determinant: " << std::fixed << std::setprecision(6) << solver.get_determinant() << "\n";
@@ -180,20 +156,16 @@ int main()
         std::cout << "Cholesky Decomposition Solver\n";
         std::cout << std::string(60, '=') << "\n";
         
-        // Read system from file
         auto [matrix, rhs] = read_system_from_file("data.txt");
         
         std::cout << "Successfully loaded " << matrix.size() 
                   << "x" << matrix.size() << " system from data.txt\n";
         
-        // Display matrix
         display_matrix(matrix);
         
-        // Create solver and solve
         CholeskySolver solver(std::move(matrix));
         auto solution = solver.solve(rhs);
         
-        // Display results
         display_results(solver, rhs);
         
         return 0;

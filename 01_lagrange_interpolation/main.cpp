@@ -22,7 +22,6 @@ int main()
 {
     try 
     {
-        // Task 1: Manual input and interpolation
         LagrangeInterpolator interpolator1({{-4, 5}, {-3, 2}, {1, 5}, {2, 2}});
 
         double point;
@@ -32,7 +31,6 @@ int main()
         double result = interpolator1.evaluate(point);
         print_results(interpolator1, point, result);
 
-        // Task 2: Predefined square root-like table interpolation
         LagrangeInterpolator interpolator2({{27, 3}, {64, 4}, {125, 5}, {216, 6}});
         double result_sqrt = interpolator2.evaluate(50);
 

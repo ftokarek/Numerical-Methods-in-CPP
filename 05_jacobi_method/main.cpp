@@ -7,13 +7,6 @@
 
 using namespace numerical_methods;
 
-/**
- * @brief Reads system of linear equations from file
- * @param filename Path to the data file
- * @return Pair of coefficient matrix and RHS vector
- * @throws std::runtime_error for file or format errors
- */
-
 std::pair<std::vector<std::vector<double>>, std::vector<double>>
 read_system_from_file(const std::string& filename) 
 {
@@ -38,7 +31,6 @@ read_system_from_file(const std::string& filename)
     std::vector<std::vector<double>> matrix(n, std::vector<double>(n));
     std::vector<double> rhs(n);
 
-    // Read coefficient matrix
     for (int i = 0; i < n; ++i) 
     {
         for (int j = 0; j < n; ++j) 
@@ -53,7 +45,6 @@ read_system_from_file(const std::string& filename)
         }
     }
 
-    // Read RHS vector
     for (int i = 0; i < n; ++i) 
     {
         if (!(file >> rhs[i])) 
@@ -68,12 +59,6 @@ read_system_from_file(const std::string& filename)
 
     return {matrix, rhs};
 }
-
-/**
- * @brief Displays the system of equations
- * @param matrix Coefficient matrix
- * @param rhs Right-hand side vector
- */
 
 void display_system(const std::vector<std::vector<double>>& matrix, const std::vector<double>& rhs) 
 {
@@ -94,11 +79,6 @@ void display_system(const std::vector<std::vector<double>>& matrix, const std::v
     }
     std::cout << std::string(60, '-') << "\n";
 }
-
-/**
- * @brief Displays convergence analysis
- * @param solver The Jacobi solver instance
- */
 
 void display_convergence_analysis(const JacobiSolver& solver) 
 {
@@ -126,11 +106,6 @@ void display_convergence_analysis(const JacobiSolver& solver)
     }
 }
 
-/**
- * @brief Displays comprehensive solution results
- * @param solver The Jacobi solver instance
- */
-
 void display_results(const JacobiSolver& solver) 
 {
     const int width = 15;
@@ -153,7 +128,6 @@ void display_results(const JacobiSolver& solver)
         std::cout << "x" << std::setw(2) << i + 1 << " = " << std::setw(width) << solution[i] << "\n";
     }
     
-    // Verify solution
     double residual = solver.verify_solution();
     std::cout << "\nSolution Verification:\n";
     std::cout << std::string(30, '-') << "\n";
@@ -182,19 +156,15 @@ int main()
         std::cout << "Jacobi Iterative Method Solver\n";
         std::cout << std::string(60, '=') << "\n";
         
-        // Read system from file
         auto [matrix, rhs] = read_system_from_file("data.txt");
         
         std::cout << "Successfully loaded " << matrix.size() << "x" << matrix.size() << " system from data.txt\n";
         
-        // Display system
         display_system(matrix, rhs);
         
-        // Create solver and analyze convergence
         JacobiSolver solver(std::move(matrix), std::move(rhs));
         display_convergence_analysis(solver);
         
-        // Get user input for tolerance and max iterations
         double tolerance = 1e-10;
         std::size_t max_iterations = 1000;
         
@@ -210,11 +180,9 @@ int main()
             std::cin >> max_iterations;
         }
         
-        // Solve the system
         std::cout << "\nSolving system with Jacobi method...\n";
         auto solution = solver.solve({}, tolerance, max_iterations);
         
-        // Display results
         display_results(solver);
         
         return 0;

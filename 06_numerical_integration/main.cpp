@@ -8,10 +8,6 @@
 
 using namespace numerical_methods;
 
-/**
- * @brief Test function definitions with analytical integrals for verification
- */
-
 struct TestFunction 
 {
     std::function<double(double)> f;
@@ -19,10 +15,6 @@ struct TestFunction
     std::string description;
     std::string formula;
 };
-
-/**
- * @brief Collection of test functions with known analytical integrals
- */
 
 std::vector<TestFunction> get_test_functions() 
 {
@@ -58,14 +50,6 @@ std::vector<TestFunction> get_test_functions()
     };
 }
 
-/**
- * @brief Displays comprehensive integration results
- * @param func Test function
- * @param a Lower bound
- * @param b Upper bound
- * @param n Number of intervals
- */
-
 void display_integration_results(const TestFunction& func, double a, double b, std::size_t n) 
 {
     const int width = 20;
@@ -80,7 +64,6 @@ void display_integration_results(const TestFunction& func, double a, double b, s
     std::cout << "Interval: [" << a << ", " << b << "]\n";
     std::cout << "Number of intervals: " << n << "\n";
     
-    // Calculate analytical solution
     const double analytical = func.analytical(a, b);
     std::cout << "\nAnalytical solution: " << std::setw(width) << analytical << "\n";
     
@@ -91,7 +74,6 @@ void display_integration_results(const TestFunction& func, double a, double b, s
               << std::setw(15) << "Relative Error (%)" << "\n";
     std::cout << std::string(80, '-') << "\n";
     
-    // Test different methods
     std::vector<NumericalIntegrator::Method> methods = {
         NumericalIntegrator::Method::RECTANGLE,
         NumericalIntegrator::Method::TRAPEZOIDAL,
@@ -118,7 +100,6 @@ void display_integration_results(const TestFunction& func, double a, double b, s
         }
     }
     
-    // Test adaptive Simpson
     try 
     {
         const double adaptive_result = NumericalIntegrator::adaptive_simpson(func.f, a, b, 1e-10);
@@ -139,13 +120,6 @@ void display_integration_results(const TestFunction& func, double a, double b, s
     
     std::cout << std::string(80, '=') << "\n";
 }
-
-/**
- * @brief Demonstrates convergence analysis
- * @param func Test function
- * @param a Lower bound
- * @param b Upper bound
- */
 
 void demonstrate_convergence(const TestFunction& func, double a, double b) 
 {
@@ -194,24 +168,20 @@ int main()
         
         auto test_functions = get_test_functions();
         
-        // Test parameters
         const double a = 0.5;
         const double b = 2.5;
         const std::size_t n = 100;
         
-        // Display results for each test function
         for (const auto& func : test_functions) 
         {
             display_integration_results(func, a, b, n);
         }
         
-        // Demonstrate convergence for the first function
         if (!test_functions.empty()) 
         {
             demonstrate_convergence(test_functions[0], a, b);
         }
         
-        // Interactive mode
         char continue_testing;
         std::cout << "\nWould you like to test custom parameters? (y/n): ";
         std::cin >> continue_testing;

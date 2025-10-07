@@ -61,7 +61,6 @@ namespace numerical_methods
                     return nodes_[0].y;
                 }
 
-                // Check for exact match (early termination)
                 for (size_t i = 0; i < nodes_.size(); ++i) 
                 {
                     if (std::abs(nodes_[i].x - x) < EPSILON) 
@@ -70,7 +69,6 @@ namespace numerical_methods
                     }
                 }
 
-                // Barycentric Lagrange interpolation O(n)
                 double numerator = 0.0;
                 double denominator = 0.0;
 
@@ -95,4 +93,4 @@ namespace numerical_methods
             }
     };
 
-} // namespace numerical_methods
+}

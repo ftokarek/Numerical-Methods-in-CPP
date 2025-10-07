@@ -11,38 +11,25 @@
 
 namespace numerical_methods {
 
-/**
- * @brief Professional Gauss-Legendre quadrature integration class
- * 
- * This class implements high-precision Gauss-Legendre quadrature methods for
- * numerical integration. Gauss-Legendre quadrature achieves the highest possible
- * degree of precision for a given number of function evaluations.
- */
 class GaussLegendreIntegrator {
 public:
-    /**
-     * @brief Integration methods available
-     */
     enum class Method {
-        RECTANGLE,           // Rectangle rule O(h²)
-        TRAPEZOIDAL,        // Trapezoidal rule O(h²)
-        SIMPSON,            // Simpson's rule O(h⁴)
-        GAUSS_LEGENDRE_2,   // 2-point Gauss-Legendre O(h⁶)
-        GAUSS_LEGENDRE_3,   // 3-point Gauss-Legendre O(h⁸)
-        GAUSS_LEGENDRE_4,   // 4-point Gauss-Legendre O(h¹⁰)
-        GAUSS_LEGENDRE_5,   // 5-point Gauss-Legendre O(h¹²)
-        GAUSS_LEGENDRE_8    // 8-point Gauss-Legendre O(h¹⁸)
+        RECTANGLE,
+        TRAPEZOIDAL,
+        SIMPSON,
+        GAUSS_LEGENDRE_2,
+        GAUSS_LEGENDRE_3,
+        GAUSS_LEGENDRE_4,
+        GAUSS_LEGENDRE_5,
+        GAUSS_LEGENDRE_8
     };
 
-    /**
-     * @brief Integration result with comprehensive statistics
-     */
     struct IntegrationResult {
-        double value;                    // Computed integral value
-        double estimated_error;          // Error estimate
-        std::size_t function_evaluations; // Number of function calls
-        std::string method_name;         // Method used
-        bool high_precision;             // True for Gauss-Legendre methods
+        double value;
+        double estimated_error;
+        std::size_t function_evaluations;
+        std::string method_name;
+        bool high_precision;
         
         IntegrationResult(double val = 0.0) 
             : value(val), estimated_error(0.0), function_evaluations(0),
@@ -52,9 +39,6 @@ public:
 private:
     static constexpr double EPSILON = std::numeric_limits<double>::epsilon() * 1e6;
 
-    /**
-     * @brief Function wrapper with evaluation counting
-     */
     class FunctionWrapper {
     private:
         std::function<double(double)> f_;
@@ -70,18 +54,12 @@ private:
         }
     };
 
-    /**
-     * @brief Gauss-Legendre nodes and weights for different orders
-     */
     struct GaussLegendreData {
         std::vector<double> nodes;
         std::vector<double> weights;
         std::size_t order;
     };
 
-    /**
-     * @brief Returns Gauss-Legendre nodes and weights for specified number of points
-     */
     [[nodiscard]] static GaussLegendreData get_gauss_legendre_data(std::size_t n_points) {
         switch (n_points) {
             case 2:
@@ -127,9 +105,6 @@ private:
         }
     }
 
-    /**
-     * @brief Validates integration parameters
-     */
     static void validate_parameters(double a, double b, std::size_t n) {
         if (!std::isfinite(a) || !std::isfinite(b)) {
             throw std::invalid_argument("Integration bounds must be finite");
@@ -143,9 +118,6 @@ private:
     }
 
 public:
-    /**
-     * @brief Rectangle rule integration
-     */
     [[nodiscard]] static double rectangle_rule(
         const FunctionWrapper& f, double a, double b, std::size_t n
     ) {
@@ -162,9 +134,6 @@ public:
         return result * h;
     }
 
-    /**
-     * @brief Trapezoidal rule integration
-     */
     [[nodiscard]] static double trapezoidal_rule(
         const FunctionWrapper& f, double a, double b, std::size_t n
     ) {
@@ -181,15 +150,11 @@ public:
         return result * h;
     }
 
-    /**
-     * @brief Simpson's rule integration
-     */
     [[nodiscard]] static double simpson_rule(
         const FunctionWrapper& f, double a, double b, std::size_t n
     ) {
         validate_parameters(a, b, n);
         
-        // Ensure n is even
         if (n % 2 != 0) ++n;
         
         const double h = (b - a) / static_cast<double>(n);
@@ -204,9 +169,6 @@ public:
         return result * h / 3.0;
     }
 
-    /**
-     * @brief High-precision Gauss-Legendre quadrature
-     */
     [[nodiscard]] static double gauss_legendre_rule(
         const FunctionWrapper& f, double a, double b, std::size_t n_points
     ) {
@@ -219,7 +181,6 @@ public:
 
         const auto data = get_gauss_legendre_data(n_points);
         
-        // Transform from [-1, 1] to [a, b]
         const double scale = (b - a) / 2.0;
         const double shift = (a + b) / 2.0;
         
@@ -232,9 +193,6 @@ public:
         return scale * result;
     }
 
-    /**
-     * @brief Advanced integration with comprehensive analysis
-     */
     [[nodiscard]] static IntegrationResult integrate_advanced(
         Method method,
         const std::function<double(double)>& f,
@@ -288,7 +246,6 @@ public:
         
         result.function_evaluations = eval_count;
         
-        // Estimate error for non-Gauss methods using Richardson extrapolation
         if (!result.high_precision && n >= 4) {
             try {
                 std::size_t dummy_count = 0;
@@ -305,16 +262,12 @@ public:
                 result.estimated_error = std::numeric_limits<double>::quiet_NaN();
             }
         } else {
-            // For Gauss-Legendre, error is typically very small
             result.estimated_error = std::pow(10.0, -static_cast<double>(get_order_of_accuracy(method)));
         }
         
         return result;
     }
 
-    /**
-     * @brief Legacy interface for backward compatibility
-     */
     [[nodiscard]] static double integrate(
         Method method,
         const std::function<double(double)>& f,
@@ -324,9 +277,6 @@ public:
         return integrate_advanced(method, f, a, b, n).value;
     }
 
-    /**
-     * @brief Returns method name as string
-     */
     [[nodiscard]] static std::string get_method_name(Method method) {
         switch (method) {
             case Method::RECTANGLE:
@@ -350,9 +300,6 @@ public:
         }
     }
 
-    /**
-     * @brief Returns theoretical order of accuracy
-     */
     [[nodiscard]] static std::size_t get_order_of_accuracy(Method method) {
         switch (method) {
             case Method::RECTANGLE:
@@ -375,9 +322,6 @@ public:
         }
     }
 
-    /**
-     * @brief Performance benchmark comparing all methods
-     */
     [[nodiscard]] static std::vector<IntegrationResult> benchmark_methods(
         const std::function<double(double)>& f,
         double a, double b,
@@ -412,4 +356,4 @@ public:
     }
 };
 
-} // namespace numerical_methods
+}

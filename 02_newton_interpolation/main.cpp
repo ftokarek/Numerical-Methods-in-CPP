@@ -7,13 +7,6 @@
 
 using namespace numerical_methods;
 
-/**
- * @brief Reads interpolation data from file with comprehensive error checking
- * @param filename Path to the data file
- * @return Vector of nodes read from file
- * @throws std::runtime_error for file or format errors
- */
-
 std::vector<Node> read_data_from_file(const std::string& filename) 
 {
     if (!std::filesystem::exists(filename)) 
@@ -56,12 +49,6 @@ std::vector<Node> read_data_from_file(const std::string& filename)
     return nodes;
 }
 
-/**
- * @brief Gets evaluation point from user with input validation
- * @return Valid double value from user input
- * @throws std::runtime_error for invalid input
- */
-
 double get_evaluation_point() 
 {
     double input_point;
@@ -82,13 +69,6 @@ double get_evaluation_point()
     
     return input_point;
 }
-
-/**
- * @brief Displays comprehensive interpolation results
- * @param interpolator The Newton interpolator instance
- * @param point Evaluation point
- * @param value Interpolated value
- */
 
 void display_results(const NewtonInterpolator& interpolator, double point, double value) 
 {
@@ -138,21 +118,16 @@ int main()
         std::cout << "Newton Polynomial Interpolation\n";
         std::cout << std::string(50, '=') << "\n\n";
         
-        // Read data from file
         auto nodes = read_data_from_file("data.txt");
         
         std::cout << "Successfully loaded " << nodes.size() << " nodes from data.txt\n\n";
         
-        // Create Newton interpolator
         NewtonInterpolator interpolator(std::move(nodes));
 
-        // Get evaluation point from user
         double input_point = get_evaluation_point();
 
-        // Evaluate polynomial
         double value = interpolator.evaluate(input_point);
         
-        // Display results
         display_results(interpolator, input_point, value);
 
         return 0;

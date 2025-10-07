@@ -10,32 +10,17 @@
 
 namespace numerical_methods {
 
-/**
- * @brief Professional ODE solver for initial value problems (Cauchy problems)
- * 
- * This class implements multiple numerical methods for solving first-order
- * ordinary differential equations of the form dy/dx = f(x, y) with initial
- * condition y(x₀) = y₀.
- */
-
 class ODESolver 
 {
     public:
-        /**
-         * @brief Available ODE solving methods
-         */
         enum class Method 
         {
-            EULER,              // Euler's method (1st order)
-            MODIFIED_EULER,     // Modified Euler (Heun's method, 2nd order)
-            RUNGE_KUTTA_2,      // 2nd order Runge-Kutta
-            RUNGE_KUTTA_4,      // 4th order Runge-Kutta
-            ADAPTIVE_RK4        // Adaptive RK4 with error control
+            EULER,
+            MODIFIED_EULER,
+            RUNGE_KUTTA_2,
+            RUNGE_KUTTA_4,
+            ADAPTIVE_RK4
         };
-
-        /**
-         * @brief Solution point containing x and y values
-         */
 
         struct SolutionPoint 
         {
@@ -43,18 +28,14 @@ class ODESolver
             SolutionPoint(double x, double y) : x(x), y(y) {}
         };
 
-        /**
-         * @brief Complete solution result with metadata
-         */
-
         struct SolutionResult 
         {
-            std::vector<SolutionPoint> points;  // Solution trajectory
-            double final_value;                 // y(x_end)
-            std::size_t steps_taken;           // Number of integration steps
-            double estimated_error;            // Error estimate (for adaptive methods)
-            std::string method_name;           // Method used
-            bool converged;                    // Convergence status
+            std::vector<SolutionPoint> points;
+            double final_value;
+            std::size_t steps_taken;
+            double estimated_error;
+            std::string method_name;
+            bool converged;
             
             SolutionResult() : final_value(0.0), steps_taken(0), estimated_error(0.0), 
                             method_name("Unknown"), converged(true) {}
@@ -65,10 +46,6 @@ class ODESolver
         static constexpr double MIN_STEP_SIZE = 1e-12;
         static constexpr double MAX_STEP_SIZE = 1.0;
         static constexpr std::size_t MAX_STEPS = 1000000;
-
-        /**
-         * @brief Validates input parameters
-         */
 
         static void validate_parameters(double x0, double y0, double x_end, double h) 
         {
@@ -91,15 +68,6 @@ class ODESolver
         }
 
     public:
-        /**
-         * @brief Euler's method for solving dy/dx = f(x, y)
-         * @param f The differential equation function f(x, y)
-         * @param x0 Initial x value
-         * @param y0 Initial y value
-         * @param x_end Final x value
-         * @param h Step size
-         * @return Final y value
-         */
         
         [[nodiscard]] static double euler_method(
             const std::function<double(double, double)>& f,
@@ -116,7 +84,6 @@ class ODESolver
             
             while ((direction > 0 && x < x_end) || (direction < 0 && x > x_end)) 
             {
-                // Adjust step size for final step
                 if ((direction > 0 && x + h > x_end) || (direction < 0 && x + h < x_end)) 
                 {
                     h = x_end - x;
@@ -128,10 +95,6 @@ class ODESolver
             
             return y;
         }
-
-        /**
-         * @brief Modified Euler method (Heun's method)
-         */
 
         [[nodiscard]] static double modified_euler_method(
             const std::function<double(double, double)>& f,
@@ -148,7 +111,6 @@ class ODESolver
             
             while ((direction > 0 && x < x_end) || (direction < 0 && x > x_end)) 
             {
-                // Adjust step size for final step
                 if ((direction > 0 && x + h > x_end) || (direction < 0 && x + h < x_end)) 
                 {
                     h = x_end - x;
@@ -163,10 +125,6 @@ class ODESolver
             
             return y;
         }
-
-        /**
-         * @brief 2nd order Runge-Kutta method
-         */
 
         [[nodiscard]] static double runge_kutta_2(
             const std::function<double(double, double)>& f,
@@ -183,7 +141,6 @@ class ODESolver
             
             while ((direction > 0 && x < x_end) || (direction < 0 && x > x_end)) 
             {
-                // Adjust step size for final step
                 if ((direction > 0 && x + h > x_end) || (direction < 0 && x + h < x_end)) 
                 {
                     h = x_end - x;
@@ -198,10 +155,6 @@ class ODESolver
             
             return y;
         }
-
-        /**
-         * @brief 4th order Runge-Kutta method
-         */
 
         [[nodiscard]] static double runge_kutta_4(
             const std::function<double(double, double)>& f,
@@ -218,7 +171,6 @@ class ODESolver
             
             while ((direction > 0 && x < x_end) || (direction < 0 && x > x_end)) 
             {
-                // Adjust step size for final step
                 if ((direction > 0 && x + h > x_end) || (direction < 0 && x + h < x_end)) 
                 {
                     h = x_end - x;
@@ -235,10 +187,6 @@ class ODESolver
             
             return y;
         }
-
-        /**
-         * @brief Comprehensive solve method with full trajectory
-         */
 
         [[nodiscard]] static SolutionResult solve_complete(
             Method method,
@@ -257,12 +205,10 @@ class ODESolver
             double x = x0;
             double y = y0;
             
-            // Store initial point
             result.points.emplace_back(x, y);
             
             while ((direction > 0 && x < x_end) || (direction < 0 && x > x_end)) 
             {
-                // Adjust step size for final step
                 if ((direction > 0 && x + h > x_end) || (direction < 0 && x + h < x_end)) 
                 {
                     h = x_end - x;
@@ -318,10 +264,6 @@ class ODESolver
             return result;
         }
 
-        /**
-         * @brief Simple solve method returning only final value
-         */
-
         [[nodiscard]] static double solve(
             Method method,
             const std::function<double(double, double)>& f,
@@ -343,10 +285,6 @@ class ODESolver
             }
         }
 
-        /**
-         * @brief Returns method name as string
-         */
-
         [[nodiscard]] static std::string get_method_name(Method method) 
         {
             switch (method) 
@@ -366,10 +304,6 @@ class ODESolver
             }
         }
 
-        /**
-         * @brief Returns theoretical order of accuracy
-         */
-
         [[nodiscard]] static std::size_t get_order_of_accuracy(Method method) 
         {
             switch (method) 
@@ -387,10 +321,6 @@ class ODESolver
             }
         }
 
-        /**
-         * @brief Estimates error using Richardson extrapolation
-         */
-
         [[nodiscard]] static double estimate_error(
             Method method,
             const std::function<double(double, double)>& f,
@@ -407,4 +337,4 @@ class ODESolver
         }
     };
 
-} // namespace numerical_methods
+}

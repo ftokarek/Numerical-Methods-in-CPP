@@ -11,16 +11,6 @@
 namespace numerical_methods 
 {
 
-    /**
-     * @brief Professional Jacobi iterative method solver for linear systems
-     * 
-     * This class implements the Jacobi iterative method to solve systems of linear
-     * equations Ax = b. The method is guaranteed to converge for strictly or 
-     * irreducibly diagonally dominant matrices.
-     * 
-     * @note The Jacobi method is particularly useful for large sparse systems
-     */
-
     class JacobiSolver 
     {
         private:
@@ -34,11 +24,6 @@ namespace numerical_methods
             static constexpr std::size_t MAX_ITERATIONS = 1000;
             static constexpr double EPSILON = std::numeric_limits<double>::epsilon() * 1e6;
 
-            /**
-             * @brief Validates the input matrix and RHS vector
-             * @throws std::invalid_argument if inputs are invalid
-             */
-
             void validate_input() const 
             {
                 if (matrix_.empty()) 
@@ -51,7 +36,6 @@ namespace numerical_methods
                     throw std::invalid_argument("Matrix must have at least one row");
                 }
                 
-                // Check if matrix is square
                 for (std::size_t i = 0; i < n_; ++i) 
                 {
                     if (matrix_[i].size() != n_) 
@@ -64,7 +48,6 @@ namespace numerical_methods
                     }
                 }
                 
-                // Check RHS vector size
                 if (rhs_.size() != n_) 
                 {
                     throw std::invalid_argument(
@@ -73,7 +56,6 @@ namespace numerical_methods
                     );
                 }
                 
-                // Check for zero diagonal elements
                 for (std::size_t i = 0; i < n_; ++i) 
                 {
                     if (std::abs(matrix_[i][i]) < EPSILON) 
@@ -85,11 +67,6 @@ namespace numerical_methods
                     }
                 }
             }
-
-            /**
-             * @brief Checks if matrix is diagonally dominant
-             * @return Pair of (is_diagonally_dominant, is_strictly_dominant)
-             */
 
             [[nodiscard]] std::pair<bool, bool> check_diagonal_dominance() const 
             {
@@ -122,12 +99,6 @@ namespace numerical_methods
                 return {is_diagonally_dominant && has_strict_inequality, has_strict_inequality};
             }
 
-            /**
-             * @brief Computes the residual norm ||Ax - b||_∞
-             * @param x Current solution vector
-             * @return Maximum absolute residual
-             */
-
             [[nodiscard]] double compute_residual_norm(const std::vector<double>& x) const {
                 double max_residual = 0.0;
                 
@@ -143,13 +114,6 @@ namespace numerical_methods
                 
                 return max_residual;
             }
-
-            /**
-             * @brief Computes the solution difference norm ||x_new - x_old||_∞
-             * @param x_new New solution vector
-             * @param x_old Old solution vector
-             * @return Maximum absolute difference
-             */
 
             [[nodiscard]] double compute_solution_difference(
                 const std::vector<double>& x_new,
@@ -169,12 +133,6 @@ namespace numerical_methods
             }
 
         public:
-            /**
-             * @brief Constructs Jacobi solver with coefficient matrix and RHS vector
-             * @param matrix Coefficient matrix A
-             * @param rhs Right-hand side vector b
-             * @throws std::invalid_argument if matrix is not suitable for Jacobi method
-             */
 
             JacobiSolver(std::vector<std::vector<double>> matrix, std::vector<double> rhs)
                 : matrix_(std::move(matrix)), rhs_(std::move(rhs)), n_(matrix_.size()),
@@ -182,21 +140,11 @@ namespace numerical_methods
                 validate_input();
             }
 
-            /**
-             * @brief Solves the system using Jacobi iteration with convergence checking
-             * @param initial_guess Initial solution guess (default: zero vector)
-             * @param tolerance Convergence tolerance (default: 1e-10)
-             * @param max_iterations Maximum number of iterations (default: 1000)
-             * @return Solution vector
-             * @throws std::runtime_error if method doesn't converge
-             */
-
             [[nodiscard]] std::vector<double> solve(
                 const std::vector<double>& initial_guess = {},
                 double tolerance = DEFAULT_TOLERANCE,
                 std::size_t max_iterations = MAX_ITERATIONS
             ) {
-                // Initialize solution vector
                 if (initial_guess.empty()) 
                 {
                     solution_.assign(n_, 0.0);
@@ -215,7 +163,6 @@ namespace numerical_methods
                 
                 for (std::size_t iter = 0; iter < max_iterations; ++iter) 
                 {
-                    // Jacobi iteration: x_i^(k+1) = (b_i - Σ(j≠i) a_ij * x_j^(k)) / a_ii
                     for (std::size_t i = 0; i < n_; ++i) 
                     {
                         double sum = rhs_[i];
@@ -231,7 +178,6 @@ namespace numerical_methods
                         x_new[i] = sum / matrix_[i][i];
                     }
                     
-                    // Check convergence
                     const double solution_diff = compute_solution_difference(x_new, solution_);
                     solution_ = x_new;
                     iterations_performed_ = iter + 1;
@@ -243,7 +189,6 @@ namespace numerical_methods
                     }
                 }
                 
-                // If we reach here, method didn't converge
                 final_residual_ = compute_residual_norm(solution_);
                 throw std::runtime_error(
                     "Jacobi method failed to converge after " + std::to_string(max_iterations) + 
@@ -251,60 +196,30 @@ namespace numerical_methods
                 );
             }
 
-            /**
-             * @brief Returns the solution vector
-             * @return Const reference to solution vector
-             */
-
             [[nodiscard]] const std::vector<double>& get_solution() const noexcept 
             {
                 return solution_;
             }
-
-            /**
-             * @brief Returns the number of iterations performed
-             * @return Iterations count
-             */
 
             [[nodiscard]] std::size_t get_iterations_performed() const noexcept 
             {
                 return iterations_performed_;
             }
 
-            /**
-             * @brief Returns the final residual norm
-             * @return Final residual
-             */
-
             [[nodiscard]] double get_final_residual() const noexcept 
             {
                 return final_residual_;
             }
-
-            /**
-             * @brief Returns the size of the system
-             * @return Number of equations/unknowns
-             */
 
             [[nodiscard]] std::size_t size() const noexcept 
             {
                 return n_;
             }
 
-            /**
-             * @brief Checks if the matrix is suitable for Jacobi method
-             * @return Pair of (is_diagonally_dominant, convergence_guaranteed)
-             */
-
             [[nodiscard]] std::pair<bool, bool> analyze_convergence() const 
             {
                 return check_diagonal_dominance();
             }
-
-            /**
-             * @brief Verifies the solution by computing residual
-             * @return Maximum absolute residual
-             */
 
             [[nodiscard]] double verify_solution() const 
             {
@@ -316,4 +231,4 @@ namespace numerical_methods
             }
     };
 
-} // namespace numerical_methods
+}

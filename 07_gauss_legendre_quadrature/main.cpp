@@ -8,9 +8,6 @@
 
 using namespace numerical_methods;
 
-/**
- * @brief Test function definitions with analytical integrals for verification
- */
 struct TestFunction {
     std::function<double(double)> f;
     std::function<double(double, double)> analytical;
@@ -18,9 +15,6 @@ struct TestFunction {
     std::string formula;
 };
 
-/**
- * @brief Collection of test functions with known analytical integrals
- */
 std::vector<TestFunction> get_test_functions() {
     return {
         {
@@ -53,9 +47,6 @@ std::vector<TestFunction> get_test_functions() {
     };
 }
 
-/**
- * @brief Displays comprehensive integration comparison
- */
 void display_comparison(const TestFunction& func, double a, double b, std::size_t n = 20) {
     const int width = 25;
     const int precision = 12;
@@ -69,11 +60,9 @@ void display_comparison(const TestFunction& func, double a, double b, std::size_
     std::cout << "Interval: [" << a << ", " << b << "]\n";
     std::cout << "Intervals for classical methods: " << n << "\n";
     
-    // Calculate analytical solution
     const double analytical = func.analytical(a, b);
     std::cout << "\nAnalytical solution: " << std::setw(width) << analytical << "\n";
     
-    // Benchmark all methods
     auto results = GaussLegendreIntegrator::benchmark_methods(func.f, a, b, n);
     
     std::cout << "\n" << std::string(90, '-') << "\n";
@@ -98,9 +87,6 @@ void display_comparison(const TestFunction& func, double a, double b, std::size_
     std::cout << std::string(90, '=') << "\n";
 }
 
-/**
- * @brief Demonstrates accuracy vs efficiency trade-offs
- */
 void demonstrate_efficiency_analysis() {
     std::cout << "\n" << std::string(80, '=') << "\n";
     std::cout << "EFFICIENCY ANALYSIS: Function Evaluations vs Accuracy\n";
@@ -121,7 +107,6 @@ void demonstrate_efficiency_analysis() {
               << std::setw(20) << "Efficiency Ratio" << "\n";
     std::cout << std::string(80, '-') << "\n";
     
-    // Compare methods with different function evaluation counts
     std::vector<std::pair<GaussLegendreIntegrator::Method, std::size_t>> test_cases = {
         {GaussLegendreIntegrator::Method::RECTANGLE, 100},
         {GaussLegendreIntegrator::Method::TRAPEZOIDAL, 100},
@@ -148,9 +133,6 @@ void demonstrate_efficiency_analysis() {
     std::cout << std::string(80, '=') << "\n";
 }
 
-/**
- * @brief Interactive testing mode
- */
 void interactive_mode() {
     std::cout << "\n" << std::string(60, '=') << "\n";
     std::cout << "INTERACTIVE TESTING MODE\n";
@@ -167,7 +149,6 @@ void interactive_mode() {
     std::cout << "Number of intervals (for classical methods): ";
     std::cin >> n;
     
-    // Test with sine function
     auto test_func = TestFunction{
         [](double x) { return std::sin(x); },
         [](double a, double b) { return -std::cos(b) + std::cos(a); },
@@ -185,21 +166,17 @@ int main() {
         
         auto test_functions = get_test_functions();
         
-        // Standard test cases
         std::vector<std::pair<double, double>> intervals = {
             {0.5, 2.5},
             {0.5, 5.0}
         };
         
-        // Display comparisons for each function
         for (std::size_t i = 0; i < std::min(test_functions.size(), intervals.size()); ++i) {
             display_comparison(test_functions[i], intervals[i].first, intervals[i].second);
         }
         
-        // Efficiency analysis
         demonstrate_efficiency_analysis();
         
-        // Interactive mode
         char interactive;
         std::cout << "\nWould you like to test custom parameters? (y/n): ";
         std::cin >> interactive;

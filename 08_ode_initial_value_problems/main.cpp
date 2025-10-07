@@ -8,10 +8,6 @@
 
 using namespace numerical_methods;
 
-/**
- * @brief Test ODE problems with analytical solutions
- */
-
 struct ODEProblem 
 {
     std::function<double(double, double)> f;
@@ -21,16 +17,11 @@ struct ODEProblem
     double x0, y0, x_end;
 };
 
-/**
- * @brief Collection of test ODE problems
- */
-
 std::vector<ODEProblem> get_test_problems() 
 {
     return 
     {
         {
-            // Problem 1: y' = 2y(x+1), y(0) = 1
             [](double x, double y) { return 2.0 * y * (x + 1.0); },
             [](double x) { return std::exp(x * x + 2.0 * x); },
             "Separable ODE",
@@ -38,7 +29,6 @@ std::vector<ODEProblem> get_test_problems()
             0.0, 1.0, 1.0
         },
         {
-            // Problem 2: y' = x + y, y(0) = 0.1
             [](double x, double y) { return x + y; },
             [](double x) { return -1.0 - x + 1.1 * std::exp(x); },
             "Linear ODE",
@@ -46,7 +36,6 @@ std::vector<ODEProblem> get_test_problems()
             0.0, 0.1, 1.0
         },
         {
-            // Problem 3: y' = -y, y(0) = 1 (exponential decay)
             [](double x, double y) { return -y; },
             [](double x) { return std::exp(-x); },
             "Exponential decay",
@@ -55,10 +44,6 @@ std::vector<ODEProblem> get_test_problems()
         }
     };
 }
-
-/**
- * @brief Displays comprehensive solution comparison
- */
 
 void display_solution_comparison(const ODEProblem& problem, double h) 
 {
@@ -75,7 +60,6 @@ void display_solution_comparison(const ODEProblem& problem, double h)
     std::cout << "Interval: [" << problem.x0 << ", " << problem.x_end << "]\n";
     std::cout << "Step size: " << h << "\n";
     
-    // Calculate analytical solution
     const double analytical = problem.analytical(problem.x_end);
     std::cout << "\nAnalytical solution: " << std::setw(width) << analytical << "\n";
     
@@ -87,7 +71,6 @@ void display_solution_comparison(const ODEProblem& problem, double h)
               << std::setw(10) << "Steps" << "\n";
     std::cout << std::string(80, '-') << "\n";
     
-    // Test different methods
     std::vector<ODESolver::Method> methods = {
         ODESolver::Method::EULER,
         ODESolver::Method::MODIFIED_EULER,
@@ -121,10 +104,6 @@ void display_solution_comparison(const ODEProblem& problem, double h)
     
     std::cout << std::string(80, '=') << "\n";
 }
-
-/**
- * @brief Demonstrates convergence analysis
- */
 
 void demonstrate_convergence_analysis(const ODEProblem& problem) 
 {
@@ -167,10 +146,6 @@ void demonstrate_convergence_analysis(const ODEProblem& problem)
     std::cout << std::string(80, '=') << "\n";
 }
 
-/**
- * @brief Interactive mode for custom problems
- */
-
 void interactive_mode() 
 {
     std::cout << "\n" << std::string(60, '=') << "\n";
@@ -189,7 +164,6 @@ void interactive_mode()
     std::cout << "Step size (h): ";
     std::cin >> h;
     
-    // Validate parameters
     if (std::abs(x_end - x0) < 1e-10) 
     {
         std::cout << "Warning: x_end is too close to x0. Using default values.\n";
@@ -208,14 +182,12 @@ void interactive_mode()
         h = 0.1;
     }
     
-    // Use first test problem for demonstration
     auto test_problem = get_test_problems()[0];
     
     std::cout << "\nSolving: " << test_problem.equation << "\n";
     std::cout << "With your parameters: x0=" << x0 << ", y0=" << y0 
               << ", x_end=" << x_end << ", h=" << h << "\n";
     
-    // Warning for potentially large results
     if (std::abs(x_end - x0) > 2.0 || std::abs(y0) > 10.0) 
     {
         std::cout << "\nWarning: Large interval or initial value may lead to extreme results.\n";
@@ -230,7 +202,6 @@ void interactive_mode()
         std::cout << "Final value: " << std::fixed << std::setprecision(8) << result.final_value << "\n";
         std::cout << "Steps taken: " << result.steps_taken << "\n";
         
-        // Check for extreme values
         if (std::abs(result.final_value) > 1e10) 
         {
             std::cout << "\nNote: Result is very large due to exponential growth in the ODE.\n";
@@ -253,19 +224,16 @@ int main()
         auto test_problems = get_test_problems();
         const double h = 0.1;
         
-        // Display solutions for each test problem
         for (const auto& problem : test_problems) 
         {
             display_solution_comparison(problem, h);
         }
         
-        // Demonstrate convergence for the first problem
         if (!test_problems.empty()) 
         {
             demonstrate_convergence_analysis(test_problems[0]);
         }
         
-        // Interactive mode
         char interactive;
         std::cout << "\nWould you like to test custom parameters? (y/n): ";
         std::cin >> interactive;

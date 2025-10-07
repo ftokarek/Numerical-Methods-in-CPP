@@ -7,13 +7,6 @@
 
 using namespace numerical_methods;
 
-/**
- * @brief Reads system of linear equations from file
- * @param filename Path to the data file
- * @return Pair of (coefficient matrix, RHS vector) and augmented matrix
- * @throws std::runtime_error for file or format errors
- */
-
 std::pair<std::pair<std::vector<std::vector<double>>, std::vector<double>>, 
 std::vector<std::vector<double>>> 
 
@@ -40,7 +33,6 @@ read_system_from_file(const std::string& filename)
     std::vector<double> rhs(n);
     std::vector<std::vector<double>> augmented_matrix(n, std::vector<double>(n + 1));
 
-    // Read coefficient matrix and RHS
     for (int i = 0; i < n; ++i) 
     {
         for (int j = 0; j < n; ++j) 
@@ -72,12 +64,6 @@ read_system_from_file(const std::string& filename)
     return {{coeff_matrix, rhs}, augmented_matrix};
 }
 
-/**
- * @brief Displays the original system of equations
- * @param coeff_matrix Coefficient matrix
- * @param rhs Right-hand side vector
- */
-
 void display_system(const std::vector<std::vector<double>>& coeff_matrix, 
                    const std::vector<double>& rhs) {
     const int width = 10;
@@ -107,13 +93,6 @@ void display_system(const std::vector<std::vector<double>>& coeff_matrix,
     std::cout << std::string(60, '-') << "\n";
 }
 
-/**
- * @brief Displays comprehensive solution results
- * @param solver The Gaussian solver instance
- * @param coeff_matrix Original coefficient matrix
- * @param rhs Original right-hand side vector
- */
-
 void display_results(const GaussianSolver& solver, const std::vector<std::vector<double>>& coeff_matrix, const std::vector<double>& rhs) 
 {
     const int width = 15;
@@ -135,7 +114,6 @@ void display_results(const GaussianSolver& solver, const std::vector<std::vector
         std::cout << "x" << std::setw(2) << i + 1 << " = " << std::setw(width) << solution[i] << "\n";
     }
     
-    // Verify solution
     double max_residual = solver.verify_solution(coeff_matrix, rhs);
     std::cout << "\nSolution Verification:\n";
     std::cout << std::string(30, '-') << "\n";
@@ -164,20 +142,16 @@ int main()
         std::cout << "Gaussian Elimination Solver\n";
         std::cout << std::string(60, '=') << "\n";
         
-        // Read system from file
         auto [original_data, augmented_matrix] = read_system_from_file("data.txt");
         auto [coeff_matrix, rhs] = original_data;
         
         std::cout << "Successfully loaded " << coeff_matrix.size() << "x" << coeff_matrix.size() << " system from data.txt\n";
         
-        // Display original system
         display_system(coeff_matrix, rhs);
         
-        // Create solver and solve
         GaussianSolver solver(std::move(augmented_matrix));
         auto solution = solver.solve();
         
-        // Display results
         display_results(solver, coeff_matrix, rhs);
         
         return 0;
