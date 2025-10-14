@@ -5,7 +5,7 @@ Each project was developed as part of academic coursework and focuses on algorit
 
 # Structure
 
-# Each folder (01_, 02_, …) corresponds to a separate numerical method and contains:
+Each folder (01_, 02_, …) corresponds to a separate numerical method and contains:
 	•	main.cpp – implementation in C++
 	•	data.txt – sometimes included if the program requires input from a file
 	•	README & in-code comments for quick reference
